@@ -80,3 +80,29 @@ class PlatformView(View):
             return redirect('/platforms')
         platforms = Platform.objects.all()
         return render(request, 'general_view.html', {'objects': platforms, 'form': platformForm})
+
+
+# detail views ------------
+
+class GameDetail(View):
+    def get(self, request, id):
+        detail = Game.objects.get(pk=id)
+        return render(request, 'game_details.html', {'detail': detail})
+
+
+class GenreDetail(View):
+    def get(self, request, id):
+        detail = Genre.objects.get(pk=id)
+        return render(request, 'details.html', {'detail': detail})
+
+
+class PublisherDetail(View):
+    def get(self, request, id):
+        detail = Publisher.objects.get(pk=id)
+        return render(request, 'details.html', {'detail': detail})
+
+
+class PlatformDetail(View):
+    def get(self, request, id):
+        detail = Platform.objects.get(pk=id)
+        return render(request, 'details.html', {'detail': detail})

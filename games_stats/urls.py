@@ -23,5 +23,9 @@ urlpatterns = [
     path('games/', views.GamesView.as_view()),
     path('genres/', views.GenreView.as_view()),
     path('publishers/', views.PublisherView.as_view()),
-    path('platforms/', views.PlatformView.as_view())
+    path('platforms/', views.PlatformView.as_view()),
+    path('game/<int:id>', views.GameDetail.as_view()),
+    path('publisher/<int:id>', views.PublisherDetail.as_view()),
+    path('platform/<int:id>', views.PlatformDetail.as_view()),
+    path('genre/<int:id>', views.GenreDetail.as_view())
 ]

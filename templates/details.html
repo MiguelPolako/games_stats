@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <table>
+        <tr>
+            <td>Name</td>
+            <td> {{ detail.name }}</td>
+        </tr>
+        {% if detail.country %}
+            <tr>
+                <td>Country</td>
+                <td> {{ detail.country }}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td>Games</td>
+            <td>
+                <ol>{% for item in detail.game_set.all %}
+                    <li><a href="{{ item.get_detail_url }}"> {{ item.name }}</a></li>
+                {% endfor %}
+                </ol>
+
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}
