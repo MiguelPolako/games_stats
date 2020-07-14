@@ -5,16 +5,22 @@
     <title>{% block title %} Spis gier  {% endblock %}</title>
 </head>
 <body>
-<di>
-    <h1>Statystyki sprzedażowe gier</h1>
-</di>
+<div>{% if user.is_authenticated %}
+    <p><a href="{% url 'logout' %}">Wyloguj</a></p>
+{% else %}
+    <p><a href="{% url 'login' %}">Zaloguj</a> | <a href="{% url 'signup' %}">Zarejestruj się</a></p>
+{% endif %}</div>
 <div>
-     <h2><a href="/games/">Gry</a> | <a href="/platforms/">Platformy</a> | <a href = "/genres/">Gatunki</a> | <a href="/publishers">Wydawcy</a></h2>
+    <h1>Statystyki sprzedażowe gier</h1>
+</div>
+<div>
+    <h2><a href="/games/">Gry</a> | <a href="/platforms/">Platformy</a> | <a href="/genres/">Gatunki</a> | <a
+            href="/publishers">Wydawcy</a> | <a href="/accounts/groups">Grupy</a> </h2>
 
 </div>
 
-{%  block content %}
-{%  endblock %}
+{% block content %}
+{% endblock %}
 
 </body>
 </html>

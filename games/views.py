@@ -12,36 +12,50 @@ class Index(View):
         return render(request, 'base.html')
 
 
+# games views
+
+# widok listy gry
 class GamesView(View):
     def get(self, request):
-        platforms = Platform.objects.all()
-        publishers = Publisher.objects.all()
-        genres = Genre.objects.all()
         games = Game.objects.all()
+        return render(request, 'general_view.html', {'objects': games, 'link': 'games'})
+
+
+# widok dodawania gry
+class GamesAddView(View):
+    def get(self, request):
         gameForm = forms.GameForm
-        return render(request, 'general_view.html',
-                      {'platforms': platforms, 'publishers': publishers, 'genres': genres, 'objects': games,
-                       'form': gameForm})
+        return render(request, 'form.html',
+                      {'form': gameForm})
 
     def post(self, request):
-        form = forms.GameForm(request.POST)
-        if form.is_valid():
-            form.save()
-        return redirect('/games/')
-        platforms = Platform.objects.all()
-        publishers = Publisher.objects.all()
-        genres = Genre.objects.all()
-        games = Game.objects.all()
-        return render(request, 'general_view.html.html',
-                      {'platforms': platforms, 'publishers': publishers, 'genres': genres, 'objects': games,
-                       'form': gameForm})
+        gameForm = forms.GameForm(request.POST)
+        if gameForm.is_valid():
+            gameForm.save()
+            return redirect('/games/')
+        return render(request, 'form.html', {'form': gameForm})
 
 
+# Widok szczegółów gry
+class GameDetail(View):
+    def get(self, request, id):
+        detail = Game.objects.get(pk=id)
+        return render(request, 'game_details.html', {'detail': detail})
+
+
+# Genre views ---
+# widok listy gatunków
 class GenreView(View):
     def get(self, request):
         genres = Genre.objects.all()
+        return render(request, 'general_view.html', {'objects': genres, 'link': 'genres'})
+
+
+# widok dodawania gatunku
+class GenreAddView(View):
+    def get(self, request):
         genreForm = forms.GenreForm()
-        return render(request, 'general_view.html', {'objects': genres, 'form': genreForm})
+        return render(request, 'form.html', {'form': genreForm})
 
     def post(self, request):
         genreForm = forms.GenreForm(request.POST)
@@ -49,59 +63,72 @@ class GenreView(View):
             genreForm.save()
             return redirect('/genres')
         genres = Genre.objects.all()
-        return render(request, 'general_view.html', {'objects': genres, 'form': genreForm})
+        return render(request, 'form.html', {'form': genreForm})
 
 
+# widok szczegółow gatunku
+class GenreDetail(View):
+    def get(self, request, id):
+        detail = Genre.objects.get(pk=id)
+        form = forms.GenreForm
+        return render(request, 'details.html', {'detail': detail, 'form': form})
+
+
+# Publisher views
+
+# widok listy
 class PublisherView(View):
     def get(self, request):
         publishers = Publisher.objects.all()
+        return render(request, 'general_view.html', {'objects': publishers, 'link': 'publishers'})
+
+
+# widok dodawania
+class PublisherAddView(View):
+    def get(self, request):
         publisherForm = forms.PublisherForm()
-        return render(request, 'general_view.html', {'objects': publishers, 'form': publisherForm})
+        return render(request, 'form.html', {'form': publisherForm})
 
     def post(self, request):
         publisherForm = forms.PublisherForm(request.POST)
         if publisherForm.is_valid():
             publisherForm.save()
             return redirect('/publishers')
-        publishers = Publisher.objects.all()
-        return render(request, 'general_view.html', {'objects': publishers, 'form': publisherForm})
+        return render(request, 'form.html', {'form': publisherForm})
 
 
-class PlatformView(View):
-    def get(self, request):
-        platforms = Platform.objects.all()
-        platformForm = forms.PlatformForm()
-        return render(request, 'general_view.html', {'objects': platforms, 'form': platformForm})
-
-    def post(self, request):
-        platformForm = forms.PlatformForm(request.POST)
-        if platformForm.is_valid():
-            platformForm.save()
-            return redirect('/platforms')
-        platforms = Platform.objects.all()
-        return render(request, 'general_view.html', {'objects': platforms, 'form': platformForm})
-
-
-# detail views ------------
-
-class GameDetail(View):
-    def get(self, request, id):
-        detail = Game.objects.get(pk=id)
-        return render(request, 'game_details.html', {'detail': detail})
-
-
-class GenreDetail(View):
-    def get(self, request, id):
-        detail = Genre.objects.get(pk=id)
-        return render(request, 'details.html', {'detail': detail})
-
-
+# widok szczegółów
 class PublisherDetail(View):
     def get(self, request, id):
         detail = Publisher.objects.get(pk=id)
         return render(request, 'details.html', {'detail': detail})
 
 
+# Platform views
+
+#widok listy
+class PlatformView(View):
+    def get(self, request):
+        platforms = Platform.objects.all()
+        return render(request, 'general_view.html', {'objects': platforms, 'link': 'platforms'})
+#widok dodawania
+
+
+class PlatformAddView(View):
+    def get(self, request):
+        platformForm = forms.PlatformForm()
+        return render(request, 'form.html', {'form': platformForm})
+
+    def post(self, request):
+        platformForm = forms.PlatformForm(request.POST)
+        if platformForm.is_valid():
+            platformForm.save()
+            return redirect('/platforms')
+        return render(request, 'form.html', {'form': platformForm})
+
+
+
+#widok szczegółowy
 class PlatformDetail(View):
     def get(self, request, id):
         detail = Platform.objects.get(pk=id)

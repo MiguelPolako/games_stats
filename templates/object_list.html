@@ -1,5 +1,5 @@
 <ul>
     {%  for object in objects %}
-        <li><a href="{{ object.get_detail_url }}"> {{ object }} </a></li>
+        <li><a href="{{ object.get_detail_url }}"> {{ object.name }} </a></li>
     {% endfor %}
 </ul>
