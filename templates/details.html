@@ -2,7 +2,6 @@
 
 {% block content %}
 
-    {%  include 'form.html' %}
     <table>
         <tr>
             <td>Name</td>
@@ -25,5 +24,12 @@
             </td>
         </tr>
     </table>
+
+    <form method="post">
+    {% csrf_token %}
+
+    <td><input type="submit" value="Edit" name="_edit"></td>
+    <td><input type="submit" value="Delete" name="_delete"></td>
+    </form>
 
 {% endblock %}

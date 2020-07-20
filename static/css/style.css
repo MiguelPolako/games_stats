@@ -1,0 +1,46 @@
+.sidenav {
+    height: 100%;
+    width: 200px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #1d3557;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #f1faee;
+    display: block;
+}
+
+.sidenav a:hover {
+    color: #a8dadc;
+}
+
+.main {
+    margin-left: 200px;
+    padding: 0px 10px;
+}
+
+.main h1 {
+    color: #e63946;
+}
+
+.top-nav {
+    font-size: 20px;
+    float: right;
+    text-align: right;
+    margin-top: 10px;
+    margin-right: 30px;
+    padding-bottom: 0px;
+}
+
+.top-nav #logo {
+    width: 5%;
+    text-align: right;
+}

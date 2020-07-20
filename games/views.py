@@ -40,7 +40,23 @@ class GamesAddView(View):
 class GameDetail(View):
     def get(self, request, id):
         detail = Game.objects.get(pk=id)
-        return render(request, 'game_details.html', {'detail': detail})
+        return render(request, 'game_details.html', {'detail': detail, 'id': id})
+
+    def post(self, request, id):
+        if '_edit' in request.POST:
+            return redirect('/game/{}/update'.format(id))
+
+        elif '_delete' in request.POST:
+            game = Game.objects.get(pk=id)
+            game.delete()
+            return redirect('/games/')
+
+
+class GameUpdateView(UpdateView): #modyfikwanie elementu
+    model = Game
+    form_class = forms.GameForm
+    template_name = 'form.html'
+    success_url = '/games/'
 
 
 # Genre views ---
@@ -71,7 +87,22 @@ class GenreDetail(View):
     def get(self, request, id):
         detail = Genre.objects.get(pk=id)
         form = forms.GenreForm
-        return render(request, 'details.html', {'detail': detail, 'form': form})
+        return render(request, 'details.html', {'detail': detail, 'form': form, 'id': id})
+
+    def post(self, request, id):
+        if '_edit' in request.POST:
+            return redirect('/genre/{}/update'.format(id))
+
+        elif '_delete' in request.POST:
+            genre = Genre.objects.get(pk=id)
+            genre.delete()
+            return redirect('/genres/')
+
+class GenreUpdateView(UpdateView): #modyfikwanie elementu
+    model = Genre
+    form_class = forms.GenreForm
+    template_name = 'form.html'
+    success_url = '/genres/'
 
 
 # Publisher views
@@ -101,7 +132,22 @@ class PublisherAddView(View):
 class PublisherDetail(View):
     def get(self, request, id):
         detail = Publisher.objects.get(pk=id)
-        return render(request, 'details.html', {'detail': detail})
+        return render(request, 'details.html', {'detail': detail, 'id':id})
+
+    def post(self, request, id):
+        if '_edit' in request.POST:
+            return redirect('/publisher/{}/update'.format(id))
+
+        elif '_delete' in request.POST:
+            publisher = Publisher.objects.get(pk=id)
+            publisher.delete()
+            return redirect('/publishers/')
+
+class PublisherUpdateView(UpdateView): #modyfikwanie elementu
+    model = Publisher
+    form_class = forms.PublisherForm
+    template_name = 'form.html'
+    success_url = '/publishers/'
 
 
 # Platform views
@@ -132,4 +178,19 @@ class PlatformAddView(View):
 class PlatformDetail(View):
     def get(self, request, id):
         detail = Platform.objects.get(pk=id)
-        return render(request, 'details.html', {'detail': detail})
+        return render(request, 'details.html', {'detail': detail, 'id': id})
+
+    def post(self, request, id):
+        if '_edit' in request.POST:
+            return redirect('/platform/{}/update'.format(id))
+
+        elif '_delete' in request.POST:
+            platform = Platform.objects.get(pk=id)
+            platform.delete()
+            return redirect('/platforms/')
+
+class PlatformUpdateView(UpdateView): #modyfikwanie elementu
+    model = Platform
+    form_class = forms.PlatformForm
+    template_name = 'form.html'
+    success_url = '/platforms/'
