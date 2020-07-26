@@ -38,4 +38,7 @@ urlpatterns = [
     path('game/<int:id>', views.GameDetail.as_view()),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('accounts.urls')),
+    path('user/<int:id>', views.UserProfile.as_view()),
+    path('game/chart/<int:id>', views.GameChartData.as_view(), name='game-chart'),
+    path('chart/games', views.GamesList.as_view(), name='games-list')
 ]

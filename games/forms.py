@@ -34,7 +34,7 @@ class PlatformForm(forms.ModelForm):
 class GameForm(forms.ModelForm):
     class Meta:
         model = models.Game
-        fields = '__all__'
+        exclude = ['is_favorite']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'year': forms.NumberInput(attrs={'class': 'form-control'}),

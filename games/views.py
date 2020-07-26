@@ -1,10 +1,15 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import User
+from django.db.models import F
+from django.db.models.aggregates import Sum
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import CreateView, UpdateView
 from django.shortcuts import redirect
 from games import forms
 from games.models import Publisher, Platform, Game, Genre
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 class Index(View):
@@ -51,8 +56,18 @@ class GameDetail(View):
             game.delete()
             return redirect('/games/')
 
+        elif '_fav' in request.POST:
+            game = Game.objects.get(pk=id)
+            game.is_favorite.add(request.user)
+            return redirect('/game/{}'.format(id))
 
-class GameUpdateView(UpdateView): #modyfikwanie elementu
+        elif '_del' in request.POST:
+            game = Game.objects.get(pk=id)
+            game.is_favorite.remove(request.user)
+            return redirect('/game/{}'.format(id))
+
+
+class GameUpdateView(UpdateView):  # modyfikwanie elementu
     model = Game
     form_class = forms.GameForm
     template_name = 'form.html'
@@ -98,7 +113,8 @@ class GenreDetail(View):
             genre.delete()
             return redirect('/genres/')
 
-class GenreUpdateView(UpdateView): #modyfikwanie elementu
+
+class GenreUpdateView(UpdateView):  # modyfikwanie elementu
     model = Genre
     form_class = forms.GenreForm
     template_name = 'form.html'
@@ -132,7 +148,7 @@ class PublisherAddView(View):
 class PublisherDetail(View):
     def get(self, request, id):
         detail = Publisher.objects.get(pk=id)
-        return render(request, 'details.html', {'detail': detail, 'id':id})
+        return render(request, 'details.html', {'detail': detail, 'id': id})
 
     def post(self, request, id):
         if '_edit' in request.POST:
@@ -143,7 +159,8 @@ class PublisherDetail(View):
             publisher.delete()
             return redirect('/publishers/')
 
-class PublisherUpdateView(UpdateView): #modyfikwanie elementu
+
+class PublisherUpdateView(UpdateView):  # modyfikwanie elementu
     model = Publisher
     form_class = forms.PublisherForm
     template_name = 'form.html'
@@ -152,12 +169,14 @@ class PublisherUpdateView(UpdateView): #modyfikwanie elementu
 
 # Platform views
 
-#widok listy
+# widok listy
 class PlatformView(View):
     def get(self, request):
         platforms = Platform.objects.all()
         return render(request, 'general_view.html', {'objects': platforms, 'link': 'platforms'})
-#widok dodawania
+
+
+# widok dodawania
 
 
 class PlatformAddView(View):
@@ -173,8 +192,7 @@ class PlatformAddView(View):
         return render(request, 'form.html', {'form': platformForm})
 
 
-
-#widok szczegółowy
+# widok szczegółowy
 class PlatformDetail(View):
     def get(self, request, id):
         detail = Platform.objects.get(pk=id)
@@ -189,8 +207,63 @@ class PlatformDetail(View):
             platform.delete()
             return redirect('/platforms/')
 
-class PlatformUpdateView(UpdateView): #modyfikwanie elementu
+
+class PlatformUpdateView(UpdateView):  # modyfikwanie elementu
     model = Platform
     form_class = forms.PlatformForm
     template_name = 'form.html'
     success_url = '/platforms/'
+
+
+# user profile
+
+class UserProfile(LoginRequiredMixin, View):
+    def get(self, request, id):
+        user = User.objects.get(pk=id)
+        return render(request, 'user_profile.html', {'user': user})
+
+    def post(self, request, id):
+        user = User.objects.get(pk=id)
+        id_to_del = request.POST.get('_del')
+        game = Game.objects.get(pk=id_to_del)
+        game.is_favorite.remove(request.user)
+        return redirect('/user/{}'.format(id))
+
+
+# chart data
+
+class GameChartData(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, id, format=None):
+        game = Game.objects.get(pk=id)
+        data = [game.na_sales, game.eu_sales, game.jp_sales]
+        labels = ['na_sales', 'eu_sales', 'jp.sales']
+
+        data = {
+            'labels': labels,
+            'data': data
+        }
+
+        return Response(data)
+
+
+class GamesList(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request):
+        games = Game.objects.values('name').order_by('name').annotate(total_sales=F('na_sales') + F('eu_sales'))
+        data = []
+        labels = []
+
+        for g in games:
+            labels.append(g['name'])
+            data.append(g['total_sales'])
+
+        data = {
+            'data': data,
+            'labels': labels
+        }
+        return Response(data)

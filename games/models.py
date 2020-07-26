@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -42,6 +43,7 @@ class Game(models.Model):
     platform = models.ManyToManyField(Platform)
     publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
     genres = models.ManyToManyField(Genre)
+    is_favorite = models.ManyToManyField(User)
 
 
     def __str__(self):

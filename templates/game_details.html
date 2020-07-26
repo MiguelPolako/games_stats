@@ -1,51 +1,132 @@
 {% extends 'base.html' %}
 
-{%  block content %}
-    <table>
-    <tr>
-        <td>Name:</td><td> {{ detail.name }}</td>
-    </tr>
-    <tr>
-        <td>Year:</td><td> {{ detail.year }}</td>
-    </tr>
-    <tr>
-        <td>Publisher:</td><td> <a href="{{ detail.publisher.get_detail_url }}"> {{ detail.publisher }}</a></td>
-    </tr>
-    <tr>
-        <td>Genres:</td>
-        <td><ul>
-        {% for item in detail.genres.all %}
-        <li><a href ='{{ item.get_detail_url }}'> {{ item.name }}</a></li>
-        {% endfor %}
-        </ul></td>
+<script>
+    {% block jquery %}
+        var endpoint = "/game/chart/{{ detail.id }}"
+        var defaultData = []
+        var labels = []
+        $.ajax({
+            method: 'GET',
+            url: endpoint,
+            success: function (data) {
+                console.log(data)
+                labels = data.labels
+                defaultData = data.data
 
-    </tr>
-    <tr>
-        <td>Platforms</td>
-        <td><ul>
-        {% for item in detail.platform.all %}
-        <li><a href="{{ item.get_detail_url }}"> {{ item.name }}</a></li>
-        {% endfor %}
-        </ul></td>
+                var ctx = document.getElementById('myChart');
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Markets',
+                            data: defaultData,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+        })
 
-    </tr>
-    <tr>
-        <td>EU sales:</td><td> {{ detail.eu_sales }}</td>
-    </tr>
-    <tr>
-        <td>NA sales:</td><td> {{ detail.na_sales }}</td>
-    </tr>
-    <tr>
-        <td>JP sales:</td><td> {{ detail.jp_sales }}</td>
-    </tr>
-    </table>
+    {% endblock %}
+</script>
 
-    <form method="post">
-    {% csrf_token %}
 
-    <td><input type="submit" value="Edit" name="_edit"></td>
-    <td><input type="submit" value="Delete" name="_delete"></td>
-    </form>
-</tr>
+{% block content %}
 
-{%  endblock %}
+    <div class="row">
+
+        <div class="col-sm-4">
+            <table>
+                <tr>
+                    <td>Name:</td>
+                    <td> {{ detail.name }}</td>
+                </tr>
+                <tr>
+                    <td>Year:</td>
+                    <td> {{ detail.year }}</td>
+                </tr>
+                <tr>
+                    <td>Publisher:</td>
+                    <td><a href="{{ detail.publisher.get_detail_url }}"> {{ detail.publisher }}</a></td>
+                </tr>
+                <tr>
+                    <td>Genres:</td>
+                    <td>
+                        <ul>
+                            {% for item in detail.genres.all %}
+                                <li><a href='{{ item.get_detail_url }}'> {{ item.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>Platforms</td>
+                    <td>
+                        <ul>
+                            {% for item in detail.platform.all %}
+                                <li><a href="{{ item.get_detail_url }}"> {{ item.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>EU sales:</td>
+                    <td> {{ detail.eu_sales }}</td>
+                </tr>
+                <tr>
+                    <td>NA sales:</td>
+                    <td> {{ detail.na_sales }}</td>
+                </tr>
+                <tr>
+                    <td>JP sales:</td>
+                    <td> {{ detail.jp_sales }}</td>
+                </tr>
+            </table>
+
+            <form method="post">
+                {% csrf_token %}
+                {% if user in detail.is_favorite.all %}
+                    <td><input type="submit" value="Delete from favourite" name="_del"></td>
+                {% else %}
+                    <td><input type="submit" value="Add to favorite" name="_fav"></td>
+                {% endif %}
+                <td><input type="submit" value="Edit" name="_edit"></td>
+                <td><input type="submit" value="Delete" name="_delete"></td>
+            </form>
+            </tr>
+
+        </div>
+        <div class="col-sm-4">
+            <canvas id="myChart"></canvas>
+        </div>
+
+    </div>
+{% endblock %}
