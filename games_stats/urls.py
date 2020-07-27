@@ -40,5 +40,8 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('user/<int:id>', views.UserProfile.as_view()),
     path('game/chart/<int:id>', views.GameChartData.as_view(), name='game-chart'),
-    path('chart/games', views.GamesList.as_view(), name='games-list')
+    path('chart/games', views.GamesList.as_view(), name='games-list'),
+    path('chart/genres', views.GenresList.as_view(), name='genres-list'),
+    path('chart/publishers', views.PublishersList.as_view(), name='publishers-list'),
+    path('chart/platforms', views.PlatformsList.as_view(), name='platforms-list')
 ]

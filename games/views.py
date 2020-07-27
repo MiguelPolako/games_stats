@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.db.models import F
-from django.db.models.aggregates import Sum
+from django.db.models.aggregates import Sum, Count
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import CreateView, UpdateView
@@ -254,13 +254,72 @@ class GamesList(APIView):
     permission_classes = []
 
     def get(self, request):
-        games = Game.objects.values('name').order_by('name').annotate(total_sales=F('na_sales') + F('eu_sales'))
+        games = Game.objects.values('name').order_by('name').annotate(
+            total_sales=F('na_sales') + F('eu_sales') + F('jp_sales'))
         data = []
         labels = []
 
         for g in games:
             labels.append(g['name'])
             data.append(g['total_sales'])
+
+        data = {
+            'data': data,
+            'labels': labels
+        }
+        return Response(data)
+
+
+class GenresList(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request):
+        games = Genre.objects.all().values('name').annotate(Count('game'))
+        data = []
+        labels = []
+
+        for g in games:
+            labels.append(g['name'])
+            data.append(g['game__count'])
+
+        data = {
+            'data': data,
+            'labels': labels
+        }
+        return Response(data)
+
+class PublishersList(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request):
+        publishers = Publisher.objects.all().values('name').annotate(Count('game'))
+        data = []
+        labels = []
+
+        for g in publishers:
+            labels.append(g['name'])
+            data.append(g['game__count'])
+
+        data = {
+            'data': data,
+            'labels': labels
+        }
+        return Response(data)
+
+class PlatformsList(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request):
+        platforms = Platform.objects.all().values('name').annotate(Count('game'))
+        data = []
+        labels = []
+
+        for g in platforms:
+            labels.append(g['name'])
+            data.append(g['game__count'])
 
         data = {
             'data': data,

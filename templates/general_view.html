@@ -1,4 +1,4 @@
-{%  extends 'base.html' %}
+{% extends 'base.html' %}
 
 
 <script>
@@ -14,14 +14,37 @@
                 labels = data.labels
                 defaultData = data.data
 
+                arrayOfObj = labels.map(function (d, i) {
+                    return {
+                        label: d,
+                        data: defaultData[i] || 0
+                    };
+                });
+
+                sortedArrayOfObj = arrayOfObj.sort(function (a, b) {
+                    return b.data - a.data;
+                });
+
+                newArrayLabel = [];
+                newArrayData = [];
+                sortedArrayOfObj.forEach(function (d) {
+                    newArrayLabel.push(d.label);
+                    newArrayData.push(d.data);
+                });
+
+
+
+
+
+
                 var ctx = document.getElementById('gamesChart');
                 var myChart = new Chart(ctx, {
-                    type: 'bar',
+                    type: 'horizontalBar',
                     data: {
-                        labels: labels,
+                        labels: newArrayLabel,
                         datasets: [{
-                            label: 'Markets',
-                            data: defaultData,
+                            label: 'Total Sales',
+                            data: newArrayData,
                             backgroundColor: [
                                 'rgba(255, 99, 132, 0.2)',
                                 'rgba(54, 162, 235, 0.2)',
@@ -58,11 +81,15 @@
 </script>
 
 {% block content %}
-    <a href="/{{ link }}/add" class="btn btn-primary">Dodaj</a>
-    {% include 'object_list.html' %}
-
-
-    <canvas id="gamesChart"></canvas>
+    <div class="row">
+        <div class="col-sm-4">
+            <a href="/{{ link }}/add" class="btn btn-primary">Add</a>
+            {% include 'object_list.html' %}
+        </div>
+        <div class="col-sm-6">
+            <canvas id="gamesChart"></canvas>
+        </div>
+    </div>
 {% endblock %}
 
 
