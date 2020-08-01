@@ -289,6 +289,7 @@ class GenresList(APIView):
         }
         return Response(data)
 
+
 class PublishersList(APIView):
     authentication_classes = []
     permission_classes = []
@@ -307,6 +308,7 @@ class PublishersList(APIView):
             'labels': labels
         }
         return Response(data)
+
 
 class PlatformsList(APIView):
     authentication_classes = []

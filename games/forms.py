@@ -46,3 +46,20 @@ class GameForm(forms.ModelForm):
             'platform': forms.CheckboxSelectMultiple(
                 attrs={'class': 'custom-control custom-checkbox'}),
         }
+
+    def clean(self):
+        super(GameForm, self).clean()
+        year = self.cleaned_data.get('year')
+        na_sales = self.cleaned_data.get('na_sales')
+        eu_sales = self.cleaned_data.get('eu_sales')
+        jp_sales = self.cleaned_data.get('jp_sales')
+
+        if len(str(year)) < 4:
+            raise ValidationError(f"{year} musi mieć co najmniej 4 cyfry")
+        elif year < 0:
+            raise ValidationError(f"{year} nie może być mniejszy od zera")
+
+        if (na_sales | eu_sales | jp_sales) < 0:
+            raise ValidationError("Wartość sprzedaży nie może być mniejsza od zera")
+
+        return self.cleaned_data

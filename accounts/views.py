@@ -38,7 +38,8 @@ class UpdateUserView(UpdateView):
     template_name = 'form.html'
     success_url = "/"
 
-class GroupsView(View):
+class GroupsView(PermissionRequiredMixin, View):
+    permission_required = ['auth.add_group', 'auth.change_group']
 
     def get(self, request):
         groups = Group.objects.all()
